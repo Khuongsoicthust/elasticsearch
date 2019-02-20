@@ -15,7 +15,6 @@ import com.tpbank.elastic.repository.PagesRepository;
 
 @Component
 public class Loaders {
-	String dirName = "/home/ntk/python/search/";
 
     @Autowired
     ElasticsearchOperations operations;
@@ -29,7 +28,7 @@ public class Loaders {
 
         operations.putMapping(Pages.class);
         System.out.println("Loading Data");
-        pagesRepository.save(getCollection(dirName+"chovaykm.txt", "cho vay"));
+        pagesRepository.save(getCollection("target/chovaykm.txt", "cho vay"));
 //        pagesRepository.save(getCollection(dirName+"thetindungkm.txt", "tin dung"));
 //        pagesRepository.save(getCollection(dirName+"nganhangdtkm.txt", "ngan hang dien tu"));
 //        pagesRepository.save(getCollection(dirName+"khachhangdnkm.txt", "khach hang doanh nghiep"));
