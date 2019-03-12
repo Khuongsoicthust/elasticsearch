@@ -9,7 +9,6 @@
 	<configs>
 	</configs>
 	<autoconfigs>
-		<config>java:com.mkyong.SpringBootWebApplication</config>
 	</autoconfigs>
 	<configSets>
 	</configSets>

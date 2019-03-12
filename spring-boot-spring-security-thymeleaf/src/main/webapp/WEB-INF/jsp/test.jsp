@@ -1,5 +1,5 @@
 <%@page import="javax.swing.text.Document"%>
-<%@page import="com.mkyong.search.model.Pages"%>
+<%@page import="com.tpbank.search.model.Pages"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
@@ -648,7 +648,8 @@
 						
 						var suburl=document.getElementById("box_search_keyword_text").value;
 						
-						window.location.replace("/manual/search/all/"+ suburl);
+						var urlSubtest="<%= "/elastic/search/"+ str[0]+"/"+str[1]+"/" %>";
+						window.location.replace(urlSubtest + suburl);
 					}
 					</script>
 			</div>
@@ -663,9 +664,9 @@
 							<li class="active"><a href="#" title="" class="active">Tất
 									cả các kết quả (<%= fullPages.size() %>)</a></li>
 							<li class=""><a title="" href="#">Sản phẩm và dịch vụ
-									(240)</a></li>
+									 (${resultsWithSecondTag.size()})</a></li>
 							<li class=""><a title="" href="#" class="">Khuyến mại
-									(428)</a></li>
+									(${resultsWithFirstTag.size()})</a></li>
 						</ul>
 					</section>
 				</aside>
@@ -676,10 +677,15 @@
 					<div class="pagination_news">
 						<ul class="pager">
 							<li class="pager-first-page">
-							<a class="custom-next-previous" href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang đầu</a> 
+							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang đầu</a> 
 							</li>
-							<li class="pager-previous"></li>
-							<li class="pager-previous">&lt;</li>
+							<li class="pager-previous">
+							</li>
+							<li class="pager-previous">
+														<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))-1):1 %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+								">&lt;</a>
+							</li>
 							<%
 							String strCheck="pager-item active";
 								if(request.getParameter("NofPage")!=null
@@ -687,18 +693,55 @@
 									strCheck="pager-item";
 								}
 							%>
-							<li class="pager-item <%= strCheck %>">
-							<a href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
-							</li>
 							<% //out.print(modelMap.size()); %>
-							<% for(int i=2;i<=fullPages.size()/5;i++){ %>
+							
+							<% 
+								int numCount=0;
+								if(request.getParameter("NofPage")!=null){
+									
+									numCount=Integer.valueOf(request.getParameter("NofPage"));
+								}
+								else{
+									numCount=0;
+								}
+								
+								int m=0;
+								
+								if(numCount>=7){
+									m=(numCount-1)/2;
+									
+									m=(m/3)*3;
+									
+								}
+								
+								int loop=0;
+								
+								if(fullPages.size()/5>(m+3)*2+1){
+									loop=(m+3)*2+1;
+								}else{
+									loop=fullPages.size()/5;
+								}
+								
+							%>
+							
+							<% for(int i=m*2+1;i<=loop;i++){ %>
+							<% if(i==1){ %>
+								<li class="pager-item <%= strCheck %>">
+									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
+								</li>
+							<% }else{ %>
 							<li class="pager-item">
-								<a href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
+								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
 								"><%= i %></a>
 							</li>
+							<% } %>
 							<% }%>
-							<li class="pager-previous"><a href="#"> &gt; </a></li>
-							<li class="pager-first-page"><a class="custom-next-previous" href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
+							<li class="pager-previous"><a href="#"></a>
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+								"> &gt; </a>
+							</li>
+							<li class="pager-first-page"><a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
 						</ul>
 					</div>
 					<!-- End Phân trang -->
@@ -723,23 +766,33 @@
 					<div class="pagination_news">
 						<ul class="pager">
 							<li class="pager-first-page">
-							<a class="custom-next-previous" href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang
+							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang
 									đầu</a> 
 							</li>
 							<li class="pager-previous"></li>
-							<li class="pager-previous">&lt;</li>
-							<li class="pager-item <%= strCheck %>">
-							<a href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
+							<li class="pager-previous">
+														<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))-1):1 %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+								">&lt;</a>
 							</li>
-							<% //out.print(modelMap.size()); %>
-							<% for(int i=2;i<=fullPages.size()/5;i++){ %>
+							<% for(int i=m*2+1;i<=loop;i++){ %>
+							<% if(i==1){ %>
+								<li class="pager-item <%= strCheck %>">
+									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
+								</li>
+							<% }else{ %>
 							<li class="pager-item">
-								<a href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
+								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
 								"><%= i %></a>
 							</li>
+							<% } %>
 							<% }%>
-							<li class="pager-previous"><a href="#"> &gt; </a></li>
-							<li class="pager-first-page"><a class="custom-next-previous" href="/manual/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
+							<li class="pager-previous"><a href="#"></a>
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+								"> &gt; </a>
+							</li>
+							<li class="pager-first-page"><a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
 						</ul>
 					</div>
 					
@@ -761,9 +814,30 @@
 							
 						} */
 						
-						indexBefore=(int)request.getAttribute("beforePage");
+						indexBefore=Integer.valueOf(request.getParameter("beforePage"));
 						
 						out.println(index);
+						
+						float n=(index-1)/2;
+						float l=(indexBefore-1)/2;
+						
+						if(n>=3){
+							
+							int k=(index-1)/2;
+							
+							k=(k/3)*3;
+							
+							index-=k*2;
+						}
+						
+						if(l>=3){
+							
+							int k=(indexBefore-1)/2;
+							
+							k=(k/3)*3;
+							
+							indexBefore-=k*2;
+						}
 						
 					%>
 						document.getElementById("demo").innerHTML=divs.length;
@@ -774,14 +848,17 @@
 					var beforePageNonActive=divs[<%= indexBefore-1 %>];
 					beforePageNonActive.className= 'pager-item';
 					
-					divs[<%= index-1+fullPages.size()/5 %>].className='pager-item active';
-					divs[<%= indexBefore-1+fullPages.size()/5 %>].className='pager-item';
+					divs[<%= index-1+loop-m*2 %>].className='pager-item active';
+					divs[<%= indexBefore-1+loop-m*2 %>].className='pager-item';
 					
 					/* divs = document.getElementsByClassName('pager-item');
 					document.getElementById("demo").innerHTML=divs[1].innerHTML; */
 					<% } else{ %>
+					
 					var tempList = divs[<%= index-1 %>];
 					tempList.className= 'pager-item active';
+					
+					divs[<%= index-1+loop-m*2 %>].className='pager-item active';
 					
 					<% } %>
 					
@@ -797,7 +874,10 @@
 	
 	<% out.print(fullPages.size()/5+"--------------"); %>
 	<% out.print(index+"--------------"); %>
+	<!-- Right here must be getParameter() that is right -->
 	<% out.print(request.getAttribute("beforePage")+"--------------"); %>
+	<% out.print(loop+"--------------"); %>
+	<% out.print(m*2+1+"--------------"); %>
 	
 	<!-- End maincontent -->
 	<div class="support">
