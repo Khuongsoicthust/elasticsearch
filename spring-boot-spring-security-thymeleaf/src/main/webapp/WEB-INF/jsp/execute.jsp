@@ -32,23 +32,23 @@
 			
 			String[] fields={"Title","Description","prefix","EventCode"};
 			
-			int count=(Integer)request.getAttribute("count");
-			
-			out.print(count);
-			
 			HashMap<String, String> map=new HashMap<String, String>();
 			
-			for(int i=0;i<count;i++){
+			for(int i=0;i<fields.length;i++){
 				
-				map.put(fields[i], request.getParameter(fields[i]));
+				if(request.getParameter(fields[i])!=null){
+					
+					map.put(fields[i], request.getParameter(fields[i]));
+					
+				}
 				
 			}
 			
 			//out.print(map.get(fields[1]));
 			
-			for(int i=0;i<count;i++){
+			for(int i=0;i<fields.length;i++){
 				
-				if(map.get(fields[i]).equals("selected")){
+				if(map.get(fields[i])!=null){
 					
 					fileWriter.write(" "+i);
 					

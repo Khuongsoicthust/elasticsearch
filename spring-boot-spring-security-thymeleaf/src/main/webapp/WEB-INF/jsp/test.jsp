@@ -1,3 +1,5 @@
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@page import="javax.swing.text.Document"%>
 <%@page import="com.tpbank.search.model.Pages"%>
 <%@page import="java.util.ArrayList"%>
@@ -629,10 +631,27 @@
 							List<Pages> modelMap= (List<Pages>)request.getAttribute("pages");
 					
 							List<Pages> fullPages=(List<Pages>)request.getAttribute("fullPages");
+							
+							List<Pages> fixedfullPages=(List<Pages>)request.getAttribute("fixedfullPages");
 					
 							String path=(String)request.getAttribute("urlMap");
 							
+							String textSearch="";
+							
 							String[] str=path.split("/");
+							
+							String patternRegex="(\\S+)(&)(\\S+)";
+							
+							Pattern r=Pattern.compile(patternRegex);
+							
+							Matcher matcher=r.matcher(str[str.length-1]);
+							
+							if(matcher.find()){
+								textSearch=matcher.group(1);
+							}else{
+								textSearch=str[str.length-1];
+							}
+							
 						%>
 
 	<div id="main" class="page_search">
@@ -641,7 +660,7 @@
 			<div class="box_search_keyword">
 				<div id="pre_search_box">Điều chỉnh thông tin</div>
 				<input name="keyword_text b_left" id="box_search_keyword_text"
-					value="<%= str[str.length-1] %>" type="text"> <input name="keyword_button b_right"
+					value="<%= textSearch %>" type="text"> <input name="keyword_button b_right"
 					id="box_search_keyword_button" value="Search" type="button" onclick="redirect()">
 					<script type="text/javascript">
 					function redirect(){
@@ -649,7 +668,7 @@
 						var suburl=document.getElementById("box_search_keyword_text").value;
 						
 						var urlSubtest="<%= "/elastic/search/"+ str[0]+"/"+str[1]+"/" %>";
-						window.location.replace(urlSubtest + suburl);
+						window.location.replace(urlSubtest + suburl + "?category="+"<%= request.getParameter("category") %>");
 					}
 					</script>
 			</div>
@@ -661,11 +680,17 @@
 				<aside class="sidebars b_left">
 					<section class="sidebar">
 						<ul class="menu">
-							<li class="active"><a href="#" title="" class="active">Tất
-									cả các kết quả (<%= fullPages.size() %>)</a></li>
-							<li class=""><a title="" href="#">Sản phẩm và dịch vụ
+							<li class="active"><a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>" title="" class="<c:if test = "${param.category==null}">      
+   										active</c:if>">Tất
+									cả các kết quả (<%= fixedfullPages.size() %>)</a></li>
+									<c:if test = "${ansokanInfo.getPSystem() == 'NAT'}">      
+   										process  
+									</c:if>
+							<li class=""><a class="<c:if test = "${param.category=='spdv'}">      
+   										active</c:if> " title="" href="/elastic/search/<%= request.getAttribute("urlMap") %>?category=spdv">Sản phẩm và dịch vụ
 									 (${resultsWithSecondTag.size()})</a></li>
-							<li class=""><a title="" href="#" class="">Khuyến mại
+							<li class=""><a class="<c:if test = "${param.category=='km'}">      
+   										active</c:if>" title="" href="/elastic/search/<%= request.getAttribute("urlMap") %>?category=km">Khuyến mại
 									(${resultsWithFirstTag.size()})</a></li>
 						</ul>
 					</section>
@@ -677,13 +702,11 @@
 					<div class="pagination_news">
 						<ul class="pager">
 							<li class="pager-first-page">
-							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang đầu</a> 
-							</li>
-							<li class="pager-previous">
+							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page 1" id="" onclick="reload()">Trang đầu</a> 
 							</li>
 							<li class="pager-previous">
 														<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))-1):1 %>
-														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %>&category=<%= request.getParameter("category") %> " title="Link to page <%= 1 %>" id=""
 								">&lt;</a>
 							</li>
 							<%
@@ -727,21 +750,21 @@
 							<% for(int i=m*2+1;i<=loop;i++){ %>
 							<% if(i==1){ %>
 								<li class="pager-item <%= strCheck %>">
-									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
+									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page 1" id="">1</a>
 								</li>
 							<% }else{ %>
 							<li class="pager-item">
-								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
+								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page <%= i %>" id=""
 								"><%= i %></a>
 							</li>
 							<% } %>
 							<% }%>
 							<li class="pager-previous"><a href="#"></a>
-							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
-														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %>&category=<%= request.getParameter("category") %> " title="Link to page <%= 1 %>" id=""
 								"> &gt; </a>
 							</li>
-							<li class="pager-first-page"><a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
+							<li class="pager-first-page"><a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " id="">Trang cuối</a></li>
 						</ul>
 					</div>
 					<!-- End Phân trang -->
@@ -766,29 +789,29 @@
 					<div class="pagination_news">
 						<ul class="pager">
 							<li class="pager-first-page">
-							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="" onclick="reload()">Trang
+							<a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page 1" id="" onclick="reload()">Trang
 									đầu</a> 
 							</li>
 							<li class="pager-previous"></li>
 							<li class="pager-previous">
 														<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))-1):1 %>
-														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %>&category=<%= request.getParameter("category") %> " title="Link to page <%= 1 %>" id=""
 								">&lt;</a>
 							</li>
 							<% for(int i=m*2+1;i<=loop;i++){ %>
 							<% if(i==1){ %>
 								<li class="pager-item <%= strCheck %>">
-									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page 1" id="">1</a>
+									<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page 1" id="">1</a>
 								</li>
 							<% }else{ %>
 							<li class="pager-item">
-								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %> " title="Link to page <%= i %>" id=""
+								<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= i %>&beforePage=<%= request.getAttribute("beforePage") %>&category=<%= request.getParameter("category") %> " title="Link to page <%= i %>" id=""
 								"><%= i %></a>
 							</li>
 							<% } %>
 							<% }%>
 							<li class="pager-previous"><a href="#"></a>
-							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
 														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
 								"> &gt; </a>
 							</li>
@@ -814,7 +837,11 @@
 							
 						} */
 						
-						indexBefore=Integer.valueOf(request.getParameter("beforePage"));
+						if(request.getParameter("beforePage")!=null){
+							
+							indexBefore=Integer.valueOf(request.getParameter("beforePage"));
+							
+						};
 						
 						out.println(index);
 						
@@ -842,6 +869,9 @@
 					%>
 						document.getElementById("demo").innerHTML=divs.length;
 					<% if(index!=indexBefore){ %>
+					
+					<% if(loop!=m*2+1){ %>
+					
 					var tempList = divs[<%= index-1 %>];
 					tempList.className= 'pager-item active';
 					
@@ -850,6 +880,15 @@
 					
 					divs[<%= index-1+loop-m*2 %>].className='pager-item active';
 					divs[<%= indexBefore-1+loop-m*2 %>].className='pager-item';
+					
+					<% }else{ %>
+					var tempList = divs[<%= index-1 %>];
+					tempList.className= 'pager-item active';
+					
+					var tempListbelow = divs[<%= index %>];
+					tempListbelow.className= 'pager-item active';
+					
+					<% } %>
 					
 					/* divs = document.getElementsByClassName('pager-item');
 					document.getElementById("demo").innerHTML=divs[1].innerHTML; */
@@ -861,6 +900,9 @@
 					divs[<%= index-1+loop-m*2 %>].className='pager-item active';
 					
 					<% } %>
+					
+					var spdv = document.getElementsByClassName('spdv');
+					
 					
 					</script>
 					<!-- End Phân trang -->
