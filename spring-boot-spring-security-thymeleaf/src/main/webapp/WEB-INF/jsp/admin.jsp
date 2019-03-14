@@ -63,19 +63,22 @@
                         
                             		
 							<div class="tab-content">
+							<div class="form-group">
                                  <div class="tab-pane fade in active" id="letters">
-									<h3>Category</h3>
 								 <FORM ACTION="/execute" METHOD="GET">
+								 <label for="usr">BoostWord:</label>
+  									<input type="text" class="form-control" name="boostword">
+								</div>
 									<INPUT TYPE="hidden" NAME="FormName" VALUE="PrintLetters"/>
 									<TABLE class="table table-striped">
 									<THEAD>
-										<TR><TH>Tick</TH><TH style="text-align:left">Subscription</TH><TH style="text-align:left">Venue</TH><TH>Date/Time</TH></TR>
+										<TR><TH>Option</TH><TH style="text-align:left">Detail</TH><TH style="text-align:left">Description</TH></TR>
 									</THEAD>
 									<TBODY>
-										<TR><TD><INPUT TYPE="checkbox" NAME="Title" VALUE="selected"/></TD><TD>Title</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="Description" VALUE="selected"/></TD><TD>Description</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="prefix" VALUE="selected"/></TD><TD>prefix</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="selected"/></TD><TD>Season Subscription (Fall)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
+										<TR><TD><INPUT TYPE="checkbox" NAME="title" VALUE="title"/></TD><TD>Title</TD><TD>Search by title</TD></TR>
+										<TR><TD><INPUT TYPE="checkbox" NAME="description" VALUE="description"/></TD><TD>Description</TD><TD>Search by Description</TD></TR>
+										<TR><TD><INPUT TYPE="checkbox" NAME="prefix" VALUE="prefix"/></TD><TD>prefix</TD><TD>Search by prefix</TD></TR>
+										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="EventCode"/></TD><TD>Season Subscription (Fall)</TD><TD>Search by EventCode</TD></TR>
 									</TBODY>
 									</TABLE>
 									<INPUT TYPE="submit" CLASS="btn btn-outline btn-default" VALUE="Save"/>
@@ -85,45 +88,6 @@
 								</FORM>
 								</div>
 							
-													
-								    <div class="tab-pane fade" id="emails">
-								<h3>Priority</h3>								 
-								 <FORM ACTION="" METHOD="post">
-									<INPUT TYPE="hidden" NAME="FormName" VALUE="PrintLetters"/>
-									<TABLE class="table table-striped">
-									<THEAD>
-										<TR><TH>Print</TH><TH style="text-align:left">Subscription</TH><TH style="text-align:left">Venue</TH><TH>Date/Time</TH></TR>
-									</THEAD>
-									<TBODY>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Winter)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Spring)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Summer)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Fall)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-									</TBODY>
-									</TABLE>
-									<INPUT TYPE="submit" CLASS="btn btn-outline btn-default" VALUE="Save"/>
-								</FORM>
-								</div>
-								
-							    <div class="tab-pane fade" id="loglist">
-								<h3>Logs</h3>									 
-								 <FORM ACTION="" METHOD="post">
-									<INPUT TYPE="hidden" NAME="FormName" VALUE="PrintLetters"/>
-									<TABLE class="table table-striped">
-									<THEAD>
-										<TR><TH>Print</TH><TH style="text-align:left">Subscription</TH><TH style="text-align:left">Venue</TH><TH>Date/Time</TH></TR>
-									</THEAD>
-									<TBODY>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Winter)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Spring)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Summer)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-										<TR><TD><INPUT TYPE="checkbox" NAME="EventCode" VALUE="588031"/></TD><TD>Season Subscription (Fall)</TD><TD>Downtown Theater</TD><TD>1/1/2015 12:00 PM</TD></TR>
-									</TBODY>
-									</TABLE>
-									<INPUT TYPE="submit" CLASS="btn btn-outline btn-default" VALUE="Save"/>
-								</FORM>
-								</div>
-
 							</div>
 							
 						</div>

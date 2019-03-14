@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 		,"/rest/search/**","/elastic/search/general/**"
                 		,"/elastic/search/general/title/vay"
                 		,"/elastic/search/**"
-                		,"/boost/**").permitAll()
+                		,"/boost/**","/admin").permitAll()
                 //if admin is not authorized then forward to login page
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/user/**").hasAnyRole("USER")

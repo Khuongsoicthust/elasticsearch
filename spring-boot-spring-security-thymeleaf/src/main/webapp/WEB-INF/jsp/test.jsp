@@ -667,7 +667,7 @@
 						
 						var suburl=document.getElementById("box_search_keyword_text").value;
 						
-						var urlSubtest="<%= "/elastic/search/"+ str[0]+"/"+str[1]+"/" %>";
+						var urlSubtest="<%= "/elastic/search/"+ str[0]+"/" %>";
 						window.location.replace(urlSubtest + suburl + "?category="+"<%= request.getParameter("category") %>");
 					}
 					</script>
@@ -683,9 +683,6 @@
 							<li class="active"><a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=1&beforePage=<%= request.getAttribute("beforePage") %>" title="" class="<c:if test = "${param.category==null}">      
    										active</c:if>">Tất
 									cả các kết quả (<%= fixedfullPages.size() %>)</a></li>
-									<c:if test = "${ansokanInfo.getPSystem() == 'NAT'}">      
-   										process  
-									</c:if>
 							<li class=""><a class="<c:if test = "${param.category=='spdv'}">      
    										active</c:if> " title="" href="/elastic/search/<%= request.getAttribute("urlMap") %>?category=spdv">Sản phẩm và dịch vụ
 									 (${resultsWithSecondTag.size()})</a></li>
@@ -759,8 +756,11 @@
 							</li>
 							<% } %>
 							<% }%>
+							<% int checkPreviousAbove=request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals(String.valueOf(loop))?(Integer.valueOf(request.getParameter("NofPage"))+1):1;
+							if(request.getParameter("NofPage")==null&&request.getParameter("beforePage")==null) checkPreviousAbove=2;
+							%>
 							<li class="pager-previous"><a href="#"></a>
-							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= checkPreviousAbove %>
 														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %>&category=<%= request.getParameter("category") %> " title="Link to page <%= 1 %>" id=""
 								"> &gt; </a>
 							</li>
@@ -810,9 +810,12 @@
 							</li>
 							<% } %>
 							<% }%>
+							<% int checkPreviousbelow=request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals(String.valueOf(loop))?(Integer.valueOf(request.getParameter("NofPage"))):1;
+							if(request.getParameter("NofPage")==null&&request.getParameter("beforePage")==null) checkPreviousbelow=2;
+							%>
 							<li class="pager-previous"><a href="#"></a>
-							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= request.getParameter("NofPage")!=null?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %>
-														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))):1 %> " title="Link to page <%= 1 %>" id=""
+							<a href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= checkPreviousbelow %>
+														&beforePage=<%= request.getParameter("NofPage")!=null&&!request.getParameter("NofPage").equals("1")?(Integer.valueOf(request.getParameter("NofPage"))+1):1 %> " title="Link to page <%= 1 %>" id=""
 								"> &gt; </a>
 							</li>
 							<li class="pager-first-page"><a class="custom-next-previous" href="/elastic/search/<%= request.getAttribute("urlMap") %>?NofPage=<%= fullPages.size()/5 %>&beforePage=<%= request.getAttribute("beforePage") %> " id="">Trang cuối</a></li>
@@ -915,6 +918,7 @@
 	</div>
 	
 	<% out.print(fullPages.size()/5+"--------------"); %>
+	<% out.print(fixedfullPages.size()/5+"--------------"); %>
 	<% out.print(index+"--------------"); %>
 	<!-- Right here must be getParameter() that is right -->
 	<% out.print(request.getAttribute("beforePage")+"--------------"); %>

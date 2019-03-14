@@ -30,7 +30,7 @@
 			
 			//response.sendRedirect("/home");
 			
-			String[] fields={"Title","Description","prefix","EventCode"};
+			String[] fields={"title","description","prefix","EventCode","boostword"};
 			
 			HashMap<String, String> map=new HashMap<String, String>();
 			
@@ -50,7 +50,10 @@
 				
 				if(map.get(fields[i])!=null){
 					
-					fileWriter.write(" "+i);
+					if(!fields[i].equals("boostword")) fileWriter.write(map.get(fields[i])+" ");
+					else{
+						fileWriter.write("\n"+map.get(fields[i]));
+					}
 					
 				}
 				
@@ -65,6 +68,8 @@
 			String str=dis.readLine();
 			
 			out.print(str);
+			
+			String types[]=str.split(" ");
 			
 			response.sendRedirect("/admin?response=successfully");
 			
