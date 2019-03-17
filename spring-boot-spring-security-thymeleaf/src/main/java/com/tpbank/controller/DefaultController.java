@@ -74,11 +74,9 @@ public class DefaultController {
         return "403";
     }
 
-//    @RequestMapping(value = { "/execute"}, method = RequestMethod.POST)
-//	public ModelAndView execute() {
-//		ModelAndView model = new ModelAndView();
-//		model.setViewName("execute");
-//		return model;
-//	}
+    @GetMapping("/changePassword")
+    public String changePassword() {
+    	return "changePassword";
+    }
     
 }

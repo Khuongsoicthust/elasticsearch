@@ -56,8 +56,8 @@
 
 							<div>
 								<span
-									style="width: 48%; text-align: left; display: inline-block;"><a
-									class="small-text" href="#">Forgot password?</a>
+									style="width: 48%; text-align: left; display: inline-block;"><a href="/changePassword"
+									class="small-text" href="#">Change password?</a>
 								</span>
 								
 								<span
@@ -74,9 +74,8 @@
 
 				</div>
 				<!-- end login -->
-				<div class="logo">
-					LOGO
-
+				<div class="">
+					<img src="\images\star.png">
 					<div class="clearfix"></div>
 				</div>
 

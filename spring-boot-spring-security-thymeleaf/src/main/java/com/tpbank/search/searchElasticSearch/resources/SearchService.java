@@ -5,10 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
@@ -211,13 +214,34 @@ public class SearchService {
 		return "test";
 	}*/
 
-	@RequestMapping(value = "/general/{text}", method = RequestMethod.GET)
-	public String generalSearch(Model model,@PathVariable final String text,
+	@RequestMapping(value = "/general", method = RequestMethod.GET)
+	public String generalSearch(Model model,@RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "NofPage", required = false) String nofPage,
 			@RequestParam(value = "beforePage", required = false) String beforePage,
 			@RequestParam(value = "category", required = false) String category) {
 
 		try {
+			
+			query=(query.isEmpty()||query.equals("null"))?"":query;
+			
+			/*int index=query.indexOf("#");
+			
+			if(query.contains("#")) {
+				if(index!=0)query=query.substring(0,index);
+				else {
+					query="";
+				}
+			}*/
+			
+			query=URLDecoder.decode(query);
+			
+			Pattern p=Pattern.compile("(\\?)(query)(\\=)(.*)");
+			
+			Matcher matcher=p.matcher(query);
+			
+			if(matcher.find()) {
+				query=matcher.group(4);
+			}
 			
 			//List<Pages> fullResults = new ArrayList<>();
 			final List<Pages> resultsWithFirstTag = new ArrayList<>();
@@ -237,20 +261,21 @@ public class SearchService {
 			List<Pages> fullPages = new ArrayList<>();
 			List<Pages> fixedfullPages = new ArrayList<>();
 			
-			Arrays.stream(types).forEach((type)->{
+			for(String type:types){
 				try {
-					resultsWithFirstTag.addAll(new SearchResource().mustNotMatchTypeSearchWithTag(type, text, "khuyến mại"));
-					resultsWithSecondTag.addAll(new SearchResource().mustNotMatchTypeSearchWithTag(type, text, "spdv"));
+					
+					resultsWithFirstTag.addAll(new SearchResource().mustNotMatchTypeSearchWithTag(type, query, "khuyến mại"));
+					resultsWithSecondTag.addAll(new SearchResource().mustNotMatchTypeSearchWithTag(type, query, "spdv"));
 					if(boostWord!=null&&!boostWord.isEmpty()&&!boostWord.equals("")) {
-						fixedfullPages.addAll(new SearchResource().boostMatchSearch(type, text, boostWord));
+						fixedfullPages.addAll(new SearchResource().boostMatchSearch(type, query, boostWord));
 					}else {
-						fixedfullPages.addAll(new SearchResource().prefixMatchWithTypeSearch(type, text));
+						fixedfullPages.addAll(new SearchResource().prefixMatchWithTypeSearch(type, query));
 					}
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			});
+			}
 			
 			/// Process
 			//fullResults.addAll(resultsWithFirstTag);
@@ -277,7 +302,7 @@ public class SearchService {
 			
 			//if(category.isEmpty()) return "demo";
 			
-			if(category==null||category.equals("null")) {
+			if(category==null||category.equals("null")||category.equals("all")) {
 				fullPages=fixedfullPages;
 			if (nofPage == null || Integer.valueOf(nofPage) == 1) {
 				
@@ -288,7 +313,7 @@ public class SearchService {
 			}
 			}
 			model.addAttribute("pages", pages);
-			model.addAttribute("urlMap", "general/" + text);
+			model.addAttribute("urlMap", "general?query=" + query);
 
 			if(category==null||category.isEmpty()||category.equals("null")) {
 				model.addAttribute("fullPages", fullPages);
